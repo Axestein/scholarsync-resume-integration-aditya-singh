@@ -11,11 +11,11 @@ export default function Dashboard() {
     const [activeSection, setActiveSection] = useState('overview');
     const resumeData = useSelector((state: RootState) => state.resume.data);
 
-    const scrollToSection = (sectionId) => {
+    const scrollToSection = (sectionId: string) => {
         const element = document.getElementById(sectionId);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-            setActiveSection(sectionId);
+           if (element) {
+           element.scrollIntoView({ behavior: 'smooth' });
+           setActiveSection(sectionId);
         }
     };
 
@@ -271,7 +271,7 @@ export default function Dashboard() {
                 </div>
             </section>
 
-\            <footer className="relative py-12 px-6 border-t border-white/10">
+            <footer className="relative py-12 px-6 border-t border-white/10">
                 <div className="max-w-6xl mx-auto text-center">
                     <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-1 rounded-2xl inline-block mb-4">
                         <div className="bg-slate-900 rounded-xl px-6 py-3">
