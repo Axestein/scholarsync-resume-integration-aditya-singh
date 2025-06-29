@@ -12,30 +12,36 @@ export default function Dashboard() {
     const resumeData = useSelector((state: RootState) => state.resume.data);
 
     const scrollToSection = (sectionId: string) => {
-        const element = document.getElementById(sectionId);
-           if (element) {
-           element.scrollIntoView({ behavior: 'smooth' });
-           setActiveSection(sectionId);
-        }
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setActiveSection(sectionId);
+      }
     };
 
-    const renderSkillBadge = (skill, index, category) => {
-        const colors = {
-            technical: 'from-blue-500 to-purple-600',
-            programming: 'from-green-500 to-teal-600',
-            tools: 'from-orange-500 to-red-600',
-            soft: 'from-pink-500 to-rose-600'
-        };
-        
-        return (
-            <div
-                key={index}
-                className={`px-4 py-2 rounded-full bg-gradient-to-r ${colors[category] || 'from-gray-500 to-gray-600'} text-white text-sm font-medium shadow-lg transform hover:scale-105 transition-all duration-300 hover:shadow-xl`}
-            >
-                {skill}
-            </div>
-        );
-    };
+    const renderSkillBadge = (
+  skill: string,
+  index: number,
+  category: 'technical' | 'programming' | 'tools' | 'soft'
+) => {
+  const colors = {
+    technical: 'from-blue-500 to-purple-600',
+    programming: 'from-green-500 to-teal-600',
+    tools: 'from-orange-500 to-red-600',
+    soft: 'from-pink-500 to-rose-600'
+  };
+  
+  return (
+    <div
+      key={index}
+      className={`px-4 py-2 rounded-full bg-gradient-to-r ${
+        colors[category] || 'from-gray-500 to-gray-600'
+      } text-white text-sm font-medium shadow-lg transform hover:scale-105 transition-all duration-300 hover:shadow-xl`}
+    >
+      {skill}
+    </div>
+  );
+};
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-x-hidden">
