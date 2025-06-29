@@ -3,7 +3,6 @@ import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 import { PDFDocument } from 'pdf-lib';
 
-// Initialize PDF.js worker
 const pdfjsWorker = require('pdfjs-dist/build/pdf.worker.entry');
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -83,7 +82,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log file details for debugging
     console.log('File details:', {
       name: file.name,
       type: file.type,
@@ -91,7 +89,6 @@ export async function POST(request: NextRequest) {
       lastModified: file.lastModified,
     });
 
-    // Validate file type
     if (!file.name.match(/\.(pdf|docx)$/i)) {
       return NextResponse.json(
         { error: 'Only PDF and DOCX files are allowed' },
@@ -99,14 +96,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert file to appropriate format
     const bytes = await file.arrayBuffer();
     const uint8Array = new Uint8Array(bytes);
 
     let text = '';
     let parsedData = {};
 
-    // Parse based on file type
     if (file.name.toLowerCase().endsWith('.pdf')) {
       try {
         const loadingTask = pdfjsLib.getDocument({ data: uint8Array });
@@ -149,7 +144,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Parse the extracted text to get structured data
     try {
       parsedData = parseResumeText(text);
     } catch (error: any) {
@@ -168,13 +162,11 @@ export async function POST(request: NextRequest) {
 }
 
 function parseResumeText(text: string): ResumeData {
-    // Split text into lines and clean up
     const lines = text
         .split('\n')
         .map(line => line.trim())
         .filter(line => line.length > 0);
 
-    // Initialize data structure
     const data: ResumeData = {
         name: '',
         contact: {
@@ -195,7 +187,6 @@ function parseResumeText(text: string): ResumeData {
         certifications: []
     };
 
-    // Extract name with more sophisticated pattern
     const namePattern = /^([A-Z][A-Z\s]+|[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)(?:\s*[-–—]\s*[A-Z][A-Za-z\s]+)?$/;
     for (let i = 0; i < Math.min(3, lines.length); i++) {
         const nameMatch = lines[i].match(namePattern);
@@ -205,7 +196,6 @@ function parseResumeText(text: string): ResumeData {
         }
     }
 
-    // Extract contact information with structured format
     const contactPatterns = {
         email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/,
         phone: /(?:\+\d{1,3}[-.]?)?\(?\d{3}\)?[-.]?\d{3}[-.]?\d{4}/,
@@ -213,7 +203,6 @@ function parseResumeText(text: string): ResumeData {
         portfolio: /(?:https?:\/\/)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\/[a-zA-Z0-9-]+)*/
     };
 
-    // Process contact information only once
     let contactProcessed = false;
     lines.forEach(line => {
         if (!contactProcessed) {
@@ -223,14 +212,12 @@ function parseResumeText(text: string): ResumeData {
                     data.contact[type as keyof typeof data.contact] = match[0];
                 }
             });
-            // Check if all contact fields are filled
             if (Object.values(data.contact).every(value => value !== '')) {
                 contactProcessed = true;
             }
         }
     });
 
-    // Define section patterns with more specific boundaries
     const sectionPatterns = {
         education: /EDUCATION\s*([\s\S]*?)(?=SKILLS|EXPERIENCE|PROJECTS|CERTIFICATIONS|$)/i,
         skills: /SKILLS\s*([\s\S]*?)(?=EDUCATION|EXPERIENCE|PROJECTS|CERTIFICATIONS|$)/i,
@@ -239,7 +226,6 @@ function parseResumeText(text: string): ResumeData {
         certifications: /CERTIFICATIONS\s*(?:&|AND)?\s*ACHIEVEMENTS\s*([\s\S]*?)$/i
     };
 
-    // Extract sections using patterns
     let processedText = text;
     Object.entries(sectionPatterns).forEach(([section, pattern]) => {
         const match = processedText.match(pattern);
@@ -267,7 +253,6 @@ function parseResumeText(text: string): ResumeData {
                     break;
             }
 
-            // Remove the processed section from the text to prevent duplicate matches
             processedText = processedText.replace(match[0], '');
         }
     });
@@ -280,7 +265,6 @@ function processEducationSection(content: string[], resumeData: ResumeData) {
     let isNewEntry = true;
 
     for (const line of content) {
-        // Check for institution name (usually contains university, college, etc.)
         if (isNewEntry && /(university|college|institute|school)/i.test(line)) {
             if (Object.keys(currentEducation).length > 0) {
                 resumeData.education.push(currentEducation as Education);
@@ -290,19 +274,16 @@ function processEducationSection(content: string[], resumeData: ResumeData) {
             continue;
         }
 
-        // Check for degree
         if (!currentEducation.degree && /(bachelor|master|phd|b\.?s\.?|m\.?s\.?|b\.?e\.?|m\.?e\.?)/i.test(line)) {
             currentEducation.degree = line;
             continue;
         }
 
-        // Check for field of study
         if (!currentEducation.fieldOfStudy && /(computer science|engineering|mathematics|physics|chemistry|biology)/i.test(line)) {
             currentEducation.fieldOfStudy = line;
             continue;
         }
 
-        // Check for dates
         if (!currentEducation.startDate && /(20\d{2}|19\d{2})/.test(line)) {
             const dates = line.match(/(20\d{2}|19\d{2})/g);
             if (dates) {
@@ -314,7 +295,6 @@ function processEducationSection(content: string[], resumeData: ResumeData) {
             continue;
         }
 
-        // Check for GPA
         if (!currentEducation.gpa && /gpa|grade point average/i.test(line)) {
             const gpaMatch = line.match(/\d\.\d{1,2}/);
             if (gpaMatch) {
@@ -323,7 +303,6 @@ function processEducationSection(content: string[], resumeData: ResumeData) {
         }
     }
 
-    // Add the last education entry
     if (Object.keys(currentEducation).length > 0) {
         resumeData.education.push(currentEducation as Education);
     }
@@ -340,7 +319,6 @@ function processSkillsSection(content: string[], resumeData: ResumeData) {
     let currentCategory = 'technical';
 
     for (const line of content) {
-        // Check for category headers
         for (const [category, pattern] of Object.entries(skillCategories)) {
             if (pattern.test(line)) {
                 currentCategory = category;
@@ -348,10 +326,8 @@ function processSkillsSection(content: string[], resumeData: ResumeData) {
             }
         }
 
-        // Process skills in the line
         const skills = line.split(/[,•|]/).map(skill => skill.trim()).filter(skill => skill.length > 0);
         
-        // Add skills to appropriate category
         for (const skill of skills) {
             if (!resumeData.skills[currentCategory as keyof typeof resumeData.skills].includes(skill)) {
                 resumeData.skills[currentCategory as keyof typeof resumeData.skills].push(skill);
@@ -365,7 +341,6 @@ function processExperienceSection(content: string[], resumeData: ResumeData) {
     let isNewEntry = true;
 
     for (const line of content) {
-        // Check for company name (usually contains company, inc, ltd, etc.)
         if (isNewEntry && /(inc\.?|ltd\.?|llc|corp\.?|company)/i.test(line)) {
             if (Object.keys(currentExperience).length > 0) {
                 resumeData.experience.push(currentExperience as Experience);
@@ -375,13 +350,11 @@ function processExperienceSection(content: string[], resumeData: ResumeData) {
             continue;
         }
 
-        // Check for position
         if (!currentExperience.position && /(engineer|developer|analyst|manager|director|lead|architect)/i.test(line)) {
             currentExperience.position = line;
             continue;
         }
 
-        // Check for dates
         if (!currentExperience.startDate && /(20\d{2}|19\d{2})/.test(line)) {
             const dates = line.match(/(20\d{2}|19\d{2})/g);
             if (dates) {
@@ -393,7 +366,6 @@ function processExperienceSection(content: string[], resumeData: ResumeData) {
             continue;
         }
 
-        // Check for description points
         if (line.startsWith('•') || line.startsWith('-')) {
             if (!currentExperience.description) {
                 currentExperience.description = [];
@@ -402,7 +374,6 @@ function processExperienceSection(content: string[], resumeData: ResumeData) {
         }
     }
 
-    // Add the last experience entry
     if (Object.keys(currentExperience).length > 0) {
         resumeData.experience.push(currentExperience as Experience);
     }
@@ -413,7 +384,6 @@ function processProjectsSection(content: string[], resumeData: ResumeData) {
     let isNewEntry = true;
 
     for (const line of content) {
-        // Check for project name (usually starts with a title)
         if (isNewEntry && line.length > 0 && !line.startsWith('•') && !line.startsWith('-')) {
             if (Object.keys(currentProject).length > 0) {
                 resumeData.projects.push(currentProject as Project);
@@ -423,20 +393,17 @@ function processProjectsSection(content: string[], resumeData: ResumeData) {
             continue;
         }
 
-        // Check for description
         if (!currentProject.description && line.length > 0) {
             currentProject.description = line;
             continue;
         }
 
-        // Check for technologies
         if (line.includes('Technologies:') || line.includes('Tech Stack:')) {
             const techs = line.split(':')[1].split(/[,•|]/).map(tech => tech.trim()).filter(tech => tech.length > 0);
             currentProject.technologies = techs;
             continue;
         }
 
-        // Check for achievements
         if (line.startsWith('•') || line.startsWith('-')) {
             if (!currentProject.achievements) {
                 currentProject.achievements = [];
@@ -445,7 +412,6 @@ function processProjectsSection(content: string[], resumeData: ResumeData) {
         }
     }
 
-    // Add the last project entry
     if (Object.keys(currentProject).length > 0) {
         resumeData.projects.push(currentProject as Project);
     }
@@ -456,7 +422,6 @@ function processCertificationsSection(content: string[], resumeData: ResumeData)
     let isNewEntry = true;
 
     for (const line of content) {
-        // Check for certification name
         if (isNewEntry && line.length > 0 && !line.startsWith('•') && !line.startsWith('-')) {
             if (Object.keys(currentCert).length > 0) {
                 resumeData.certifications.push(currentCert as Certification);
@@ -466,13 +431,11 @@ function processCertificationsSection(content: string[], resumeData: ResumeData)
             continue;
         }
 
-        // Check for issuer
         if (!currentCert.issuer && /(issued by|from|by)/i.test(line)) {
             currentCert.issuer = line.replace(/(issued by|from|by)/i, '').trim();
             continue;
         }
 
-        // Check for date
         if (!currentCert.date && /(20\d{2}|19\d{2})/.test(line)) {
             const dateMatch = line.match(/(20\d{2}|19\d{2})/);
             if (dateMatch) {
@@ -480,7 +443,6 @@ function processCertificationsSection(content: string[], resumeData: ResumeData)
             }
         }
 
-        // Check for credential ID
         if (!currentCert.credentialId && /(credential|id|number)/i.test(line)) {
             const idMatch = line.match(/[A-Z0-9-]+/);
             if (idMatch) {
@@ -489,7 +451,6 @@ function processCertificationsSection(content: string[], resumeData: ResumeData)
         }
     }
 
-    // Add the last certification entry
     if (Object.keys(currentCert).length > 0) {
         resumeData.certifications.push(currentCert as Certification);
     }

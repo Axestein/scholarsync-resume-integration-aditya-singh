@@ -18,8 +18,19 @@ interface RequestData {
   };
 }
 
-// Project templates categorized by domain
 const projectTemplates = {
+  'Data Science': [
+    {
+      title: 'Data Analysis Pipeline',
+      description: 'Build a data analysis pipeline for {domain} using Python. Implement data cleaning, visualization, and statistical analysis.',
+      tags: ['Python', 'Pandas', 'NumPy', 'Matplotlib'],
+    },
+    {
+      title: 'Big Data Processing System',
+      description: 'Create a big data processing system for {domain} using distributed computing frameworks.',
+      tags: ['Python', 'Spark', 'Hadoop', 'Data Engineering'],
+    },
+  ],
   'AI/ML': [
     {
       title: 'Machine Learning Model for {domain}',
@@ -44,18 +55,6 @@ const projectTemplates = {
       tags: ['JavaScript', 'React', 'Service Workers', 'PWA'],
     },
   ],
-  'Data Science': [
-    {
-      title: 'Data Analysis Pipeline',
-      description: 'Build a data analysis pipeline for {domain} using Python. Implement data cleaning, visualization, and statistical analysis.',
-      tags: ['Python', 'Pandas', 'NumPy', 'Matplotlib'],
-    },
-    {
-      title: 'Big Data Processing System',
-      description: 'Create a big data processing system for {domain} using distributed computing frameworks.',
-      tags: ['Python', 'Spark', 'Hadoop', 'Data Engineering'],
-    },
-  ],
   'Cybersecurity': [
     {
       title: 'Security Analysis Tool',
@@ -70,15 +69,14 @@ const projectTemplates = {
   ],
 };
 
-// Skill to domain mapping
 const skillToDomain: { [key: string]: string[] } = {
-  'Python': ['AI/ML', 'Data Science', 'Cybersecurity'],
-  'JavaScript': ['Web Development', 'Cybersecurity'],
-  'React': ['Web Development'],
   'Node.js': ['Web Development'],
   'TensorFlow': ['AI/ML'],
   'PyTorch': ['AI/ML'],
   'Pandas': ['Data Science'],
+  'Python': ['AI/ML', 'Data Science', 'Cybersecurity'],
+  'JavaScript': ['Web Development', 'Cybersecurity'],
+  'React': ['Web Development'],
   'Machine Learning': ['AI/ML', 'Data Science'],
   'Deep Learning': ['AI/ML'],
   'NLP': ['AI/ML'],
@@ -86,7 +84,6 @@ const skillToDomain: { [key: string]: string[] } = {
   'Security': ['Cybersecurity'],
 };
 
-// Research interest to domain mapping
 const interestToDomain: { [key: string]: string[] } = {
   'Artificial Intelligence': ['AI/ML'],
   'Machine Learning': ['AI/ML'],
@@ -107,14 +104,12 @@ function calculateRelevance(
 ): number {
   let relevance = 0;
   
-  // Check skill matches
   suggestion.tags.forEach(tag => {
     if (skills.some(skill => skill.toLowerCase().includes(tag.toLowerCase()))) {
       relevance += 2;
     }
   });
 
-  // Check interest matches
   if (interests.some(interest => 
     suggestion.description.toLowerCase().includes(interest.toLowerCase())
   )) {
@@ -131,24 +126,20 @@ function generateSuggestions(
   const suggestions: ProjectSuggestion[] = [];
   const domains = new Set<string>();
 
-  // Determine relevant domains from skills
   skills.forEach(skill => {
     const skillDomains = skillToDomain[skill] || [];
     skillDomains.forEach(domain => domains.add(domain));
   });
 
-  // Add domains from research interests
   interests.forEach(interest => {
     const interestDomains = interestToDomain[interest] || [];
     interestDomains.forEach(domain => domains.add(domain));
   });
 
-  // Generate suggestions for each domain
   domains.forEach(domain => {
     const templates = projectTemplates[domain as keyof typeof projectTemplates] || [];
     
     templates.forEach(template => {
-      // Replace placeholders with actual values
       const title = template.title.replace('{domain}', domain);
       const description = template.description
         .replace('{domain}', domain)
@@ -171,7 +162,6 @@ function generateSuggestions(
     });
   });
 
-  // Sort by relevance and limit to top 5
   return suggestions
     .sort((a, b) => b.relevance - a.relevance)
     .slice(0, 5);

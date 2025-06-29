@@ -39,13 +39,12 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-x-hidden">
-            {/* Animated Background Elements */}
+
             <div className="absolute inset-0 overflow-hidden">
                 <div className="absolute -top-1/2 -right-1/2 w-96 h-96 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
                 <div className="absolute -bottom-1/2 -left-1/2 w-96 h-96 bg-gradient-to-r from-blue-500/20 to-teal-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
             </div>
 
-            {/* Floating Navigation */}
             <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-black/20 backdrop-blur-xl rounded-full px-6 py-3 border border-white/10">
                 <div className="flex space-x-6">
                     {[
@@ -69,7 +68,6 @@ export default function Dashboard() {
                 </div>
             </nav>
 
-            {/* Hero Section */}
             <section id="overview" className="relative min-h-screen flex items-center justify-center px-6">
                 <div className="max-w-6xl mx-auto text-center">
                     <div className="mb-8 inline-block">
@@ -120,7 +118,6 @@ export default function Dashboard() {
                 </div>
             </section>
 
-            {/* Resume Section */}
             <section id="resume" className="relative py-20 px-6">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-12">
@@ -159,7 +156,6 @@ export default function Dashboard() {
                         )}
                     </div>
 
-                    {/* Skills Showcase */}
                     {resumeData?.skills && (
                         <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 mb-8">
                             <h3 className="text-2xl font-semibold mb-6 text-center">Skills Matrix</h3>
@@ -178,7 +174,6 @@ export default function Dashboard() {
                         </div>
                     )}
 
-                    {/* Experience Timeline */}
                     {resumeData?.experience && resumeData.experience.length > 0 && (
                         <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 mb-8">
                             <h3 className="text-2xl font-semibold mb-6 text-center">Professional Journey</h3>
@@ -209,7 +204,6 @@ export default function Dashboard() {
                 </div>
             </section>
 
-            {/* Scholar Section */}
             <section id="scholar" className="relative py-20 px-6">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-12">
@@ -225,7 +219,6 @@ export default function Dashboard() {
                 </div>
             </section>
 
-            {/* Projects Section */}
             <section id="projects" className="relative py-20 px-6">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-12">
@@ -239,7 +232,6 @@ export default function Dashboard() {
                         <ProjectSuggestions />
                     </div>
 
-                    {/* Project Showcase */}
                     {resumeData?.projects && resumeData.projects.length > 0 && (
                         <div className="grid md:grid-cols-2 gap-6">
                             {resumeData.projects.map((project, index) => (
@@ -279,8 +271,7 @@ export default function Dashboard() {
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="relative py-12 px-6 border-t border-white/10">
+\            <footer className="relative py-12 px-6 border-t border-white/10">
                 <div className="max-w-6xl mx-auto text-center">
                     <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-1 rounded-2xl inline-block mb-4">
                         <div className="bg-slate-900 rounded-xl px-6 py-3">
@@ -291,6 +282,9 @@ export default function Dashboard() {
                     </div>
                     <p className="text-gray-400">
                         Empowering researchers and professionals with AI-driven project recommendations
+                    </p>
+                    <p className="text-gray-400">
+                        Made by Aditya
                     </p>
                 </div>
             </footer>
