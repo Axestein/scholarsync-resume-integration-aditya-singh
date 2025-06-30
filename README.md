@@ -1,8 +1,5 @@
 # ScholarSync - Resume & Google Scholar Integration App
 
-![ScholarSync Banner](https://via.placeholder.com/1200x400/4F46E5/FFFFFF?text=ScholarSync)  
-*[Insert Application Screenshot or Demo Video Here]*
-
 ## 🚀 Overview
 
 ScholarSync is an intelligent full-stack web application that bridges your professional resume with your academic Google Scholar profile to suggest personalized research projects. Our AI-powered platform analyzes your skills, education, work experience, and research interests to recommend projects that align perfectly with your expertise.
@@ -12,6 +9,21 @@ ScholarSync is an intelligent full-stack web application that bridges your profe
 - **Google Scholar Integration** - Analyzes publications, citations, and research interests
 - **AI-Powered Recommendations** - Suggests tailored research projects
 - **Beautiful Dashboard** - Modern UI with interactive visualizations
+
+### Demo ScreenShots
+
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/2e4798d8-0c05-49d0-925f-bbc02936d912" width="450"/></td>
+    <td><img src="https://github.com/user-attachments/assets/9b9d6d76-a2a0-402d-b570-354c96a870fe" width="450"/></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/562244e5-e387-4b8e-b9b5-44547f975663" width="450"/></td>
+    <td><img src="https://github.com/user-attachments/assets/e5b49a21-330a-4e3d-b9b1-6b4fda88d058" width="450"/></td>
+  </tr>
+</table>
+
+
 
 ## 🛠️ Tech Stack
 
